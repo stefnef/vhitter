@@ -1,0 +1,50 @@
+
+  /* Add some padding on document's body to prevent the content
+    to go underneath the header and footer */
+  
+    body{        
+        margin: 0px;
+        border: 0;
+        display: block;        
+    }
+  
+    .top, .footer{
+        width: 100%;        
+        background: #333;
+        padding: 10px 0;
+        color: #fff;
+    }
+    .top {
+        top: 0;
+        text-align: center;
+        font-size: large;
+    }
+    .footer{
+        position: fixed;
+        bottom: 0;
+    }    
+
+    .main{
+        width: 100%;        
+        margin: 0;
+        display: flex;
+        align-self: center;
+        align-items: center;
+    }
+
+    .nav-panel {
+        width: 8%;
+        text-align: left;
+    }
+
+    .main {
+        width: 92%;
+    }
+
+    /* Some more styles to beutify this example */
+    .nav-panel a{
+        color: rgb(9, 82, 13);
+        text-decoration: none;
+        padding: 7px 25px;
+        display: inline-block;
+    }
