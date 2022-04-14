@@ -1,104 +1,129 @@
 /* Add some padding on document's body to prevent the content
     to go underneath the header and footer */
 
+:root {
+    --theme-color: #006633;
+    --theme-select-color: #488f6c;
+    --text-color: #fff;
+}
+
 body {
     margin: 0px;
+    background-color: lightgray;
     border: 0;
-    display: block;
-    font-family: Arial, Helvetica, sans-serif;
+    display: grid;
+    grid-template-rows: 100px 1fr;
+    font-family: Helvetica, sans-serif;
 }
 
-.top,
-.footer {
-    width: 100%;
-    background: #333;
-    padding: 10px 0;
-    color: #fff;
+.header {
+    background-color: var(--theme-color);
+    color: var(--text-color);
+    display: grid;
+    grid-template-rows: 60% 40%;
 }
 
-.top {
-    top: 0;
+.header-title {
+    padding: 25px 0;
     text-align: center;
-    font-size: large;
+    font-size: 1.5rem;
+    font-weight: bold;
 }
 
-.footer {
-    position: fixed;
-    bottom: 0;
-}
-
-.main {
-    width: 100%;
-    margin: 0;
+.header-nav {
+    text-align: center;
     display: flex;
-    align-self: center;
-    align-items: center;
 }
 
-.nav-panel {
-    width: 8%;
-    text-align: left;
+.header-nav a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.header-nav li {
+    display: inline;
+    padding: 5px 20px;
+    transition: transform .2s;
+}
+
+.header-nav a:hover {
+    padding: 5px 5px;
+    border-radius: 10%;
+    background-color: var(--theme-select-color);
+}
+
+.header-nav li.active {
+    font-weight: bold;
+    background-color: var(--theme-select-color);
+    border-radius: 10%;
 }
 
 .main {
-    width: 92%;
+    background-color: lightgray;
 }
 
-/* Some more styles to beutify this example */
-.nav-panel a {
-    color: rgb(9, 82, 13);
-    text-decoration: none;
-    padding: 7px 25px;
-    display: inline-block;
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
 }
 
 .card {
-    background-color: #222;
-    color: white;
-    margin: 10px 10px;
-    padding: 20px;
-    border-radius: 5px;
-    max-width: 300px;
-    height: 250px;
-    overflow: hidden;
-    font-size: 1.25rem;
-    position: relative;
-    box-shadow: 10px 10px 10px green;
-}
-
-.card-header {
-    margin-bottom: 10px;
-    font-size: 1.5rem;
-    border-bottom: 2px solid green;
-}
-
-.card-content {
-    padding: 0 2px;
-    height: 70%;
-}
-
-.card-footer{
-    position: absolute;
-    bottom: 10px;
-}
-
-.card-chars {
-    right: 15px;
-}
-
-.card-edit-button {
-    padding: 5px 10px;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-.card-edit-button:hover {
-    font-size: 1rem;
-    color: white;
-    background-color: green;
-}
-
-.editable {
     background-color: white;
-    color: black;
+    border: 2px solid var(--theme-color);
+    border-radius: 10px;
+    margin: 10px;
+    padding: 5px;
+    display: grid;
+    grid-template-rows: 1fr 5fr 1fr;
+    min-height: 150px;
+    min-width: 200px;
+    max-width: 250px;
+    overflow: hidden;
+    box-shadow: 10px 5px 6px var(--theme-select-color);
+}
+
+.card-header,
+.card-footer {
+    background-color: white;
+    overflow: hidden;
+}
+
+.card-footer {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+    padding: 5px 0;
+}
+
+.card-footer-element {
+    display: grid;
+    width: 50%;
+    grid-template-rows: 1fr 1fr;
+    justify-items: center;
+}
+
+.twitter-icon {
+    width: 50%;
+    height: 50%;
+    opacity: .5;
+}
+
+.card-main {
+    color: var(--text-color);
+    background-color: var(--theme-select-color);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+@media screen and (max-width: 750px) {
+    .card-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .card-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
