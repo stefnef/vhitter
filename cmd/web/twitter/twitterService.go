@@ -27,7 +27,7 @@ type (
 		GetTweets(ctx context.Context) (*GetTweetsResponse, error)
 	}
 
-	v1 struct {
+	v1 struct { //TODO give v1 a better name
 		baseURL string
 		client  *http.Client
 		timeout time.Duration
@@ -52,6 +52,8 @@ func (v *v1) GetTweets(ctx context.Context) (*GetTweetsResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Set("Authorization", "Bearer <ACCESS_TOKEN>") //TODO Read token value
 
 	resp, err := v.client.Do(req)
 	if err != nil {

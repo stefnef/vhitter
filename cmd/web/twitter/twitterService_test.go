@@ -15,6 +15,7 @@ import (
 
 type twitterMockData struct {
 	called       bool
+	Bearer       string
 	responseData string
 	statusCode   int
 }
@@ -33,6 +34,7 @@ func fatal(t *testing.T, want, got interface{}) {
 func initMockData() {
 	mockData = &twitterMockData{
 		called:       false,
+		Bearer:       "Bearer <ACCESS_TOKEN>",
 		statusCode:   http.StatusOK,
 		responseData: `{"data":[{"id":"","text":""}]}`,
 	}
@@ -58,6 +60,14 @@ func handleGetTweets(w http.ResponseWriter, r *http.Request) {
 	mockData.called = true
 
 	w.Header().Set("Content-Type", "application/json")
+
+	bearer := r.Header.Get("Authorization")
+	if bearer != mockData.Bearer {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte(`{"title": "Unauthorized", "type": "about:blank", "status": 401, "detail": "Unauthorized" }`))
+		return
+	}
+
 	w.WriteHeader(mockData.statusCode)
 	w.Write([]byte(mockData.responseData))
 }
