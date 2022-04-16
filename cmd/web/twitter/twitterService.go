@@ -20,7 +20,7 @@ type (
 	}
 
 	GetTweetsResponse struct {
-		Data []Tweet `json: "data"` //TODO fix this warning
+		Data []Tweet `json:"data"`
 	}
 
 	Service interface {
