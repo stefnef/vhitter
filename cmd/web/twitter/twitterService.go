@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	ErrorNotFound = errors.New("not found")
+	ErrorNotFound     = errors.New("not found")
+	ErrorUnauthorized = errors.New("unauthorized")
 )
 
 type (
@@ -44,7 +45,7 @@ func New(baseURL string, client *http.Client, timeout time.Duration) *v1 {
 
 func (v *v1) GetTweets(ctx context.Context) (*GetTweetsResponse, error) {
 	url := fmt.Sprintf("%s/2/users/1234/tweets", v.baseURL)
-	fmt.Printf("url: %s", url)
+	fmt.Printf("url: %s\n", url)
 	ctx, cancel := context.WithTimeout(ctx, v.timeout)
 	defer cancel()
 
@@ -61,10 +62,21 @@ func (v *v1) GetTweets(ctx context.Context) (*GetTweetsResponse, error) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("%w. %s", ErrorNotFound, http.StatusText(resp.StatusCode))
+	if parsedError := checkResponseForError(resp); parsedError != nil {
+		return nil, parsedError
 	}
 
 	var d *GetTweetsResponse
 	return d, json.NewDecoder(resp.Body).Decode(&d)
+}
+
+func checkResponseForError(resp *http.Response) error {
+	if resp.StatusCode == http.StatusUnauthorized {
+		return fmt.Errorf("%w. %s", ErrorUnauthorized, http.StatusText(resp.StatusCode))
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("%w. %s", ErrorNotFound, http.StatusText(resp.StatusCode))
+	}
+	return nil
 }

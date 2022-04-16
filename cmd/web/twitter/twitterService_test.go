@@ -93,6 +93,20 @@ func Test_GetTweets_should_throw_error_if_status_code_is_not_ok(t *testing.T) {
 	}
 }
 
+func Test_GetTweets_should_handle_Unauthorized_error(t *testing.T) {
+	initMockData()
+	mockData.Bearer = "Something Unusual"
+	gotData, gotErr := service.GetTweets(context.Background())
+
+	if !errors.Is(gotErr, twitter.ErrorUnauthorized) {
+		fatal(t, nil, gotErr)
+	}
+
+	if gotData != nil {
+		fatal(t, nil, gotData)
+	}
+}
+
 func Test_GetTweets_should_be_parsed(t *testing.T) {
 	tt := []struct {
 		testCase string
