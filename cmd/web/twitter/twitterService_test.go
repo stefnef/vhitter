@@ -1,4 +1,4 @@
-package twitter_test
+package twitter
 
 import (
 	"context"
@@ -12,7 +12,6 @@ import (
 	"time"
 
 	errorDto "vorhundert.de/vhitter/cmd/web/errorDtos"
-	"vorhundert.de/vhitter/cmd/web/twitter"
 )
 
 type twitterMockData struct {
@@ -25,7 +24,7 @@ type twitterMockData struct {
 var (
 	twitterMockServer *httptest.Server
 	mockData          *twitterMockData
-	service           twitter.Service
+	service           Service
 )
 
 func fatal(t *testing.T, want, got interface{}) {
@@ -52,7 +51,7 @@ func TestMain(m *testing.M) {
 	defer twitterMockServer.Close()
 
 	fmt.Println("mocking external")
-	service = twitter.New(twitterMockServer.URL, http.DefaultClient, time.Second)
+	service = New(twitterMockServer.URL, http.DefaultClient, time.Second)
 
 	fmt.Println("run tests")
 	m.Run()
@@ -130,13 +129,13 @@ func Test_GetTweets_should_be_parsed(t *testing.T) {
 	tt := []struct {
 		testCase string
 		mockData string
-		wantData *twitter.GetTweetsResponse
+		wantData *GetTweetsResponse
 	}{
 		{
 			"success",
 			`{"data":[{"id":"1234","text":"this is text"}]}`,
-			&twitter.GetTweetsResponse{
-				Data: []twitter.Tweet{
+			&GetTweetsResponse{
+				Data: []Tweet{
 					{Id: "1234", Text: "this is text"},
 				},
 			},
@@ -144,8 +143,8 @@ func Test_GetTweets_should_be_parsed(t *testing.T) {
 		{
 			"with meta data",
 			`{"data":[{"id":"12345","text":"this is text"}],"meta":{"result_count":1,"newest_id":"12345","oldest_id":"12345"}}`,
-			&twitter.GetTweetsResponse{
-				Data: []twitter.Tweet{
+			&GetTweetsResponse{
+				Data: []Tweet{
 					{Id: "12345", Text: "this is text"},
 				},
 			},
@@ -153,8 +152,8 @@ func Test_GetTweets_should_be_parsed(t *testing.T) {
 		{
 			"more than one tweet",
 			`{"data":[{"id":"12345","text":"this is text"}, {"id":"444","text":"an other tweet"}],"meta":{"result_count":2,"newest_id":"12345","oldest_id":"444"}}`,
-			&twitter.GetTweetsResponse{
-				Data: []twitter.Tweet{
+			&GetTweetsResponse{
+				Data: []Tweet{
 					{Id: "12345", Text: "this is text"},
 					{Id: "444", Text: "an other tweet"},
 				},
