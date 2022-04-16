@@ -2,6 +2,7 @@ package twitter_test
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -107,12 +108,28 @@ func Test_GetTweets_should_handle_Unauthorized_error(t *testing.T) {
 	}
 }
 
+func Test_GetTweets_should_report_parsing_error(t *testing.T) {
+	initMockData()
+	mockData.responseData = "d}"
+	gotData, gotErr := service.GetTweets(context.Background())
+
+	if syntaxErr, ok := gotErr.(*json.SyntaxError); !ok {
+		fatal(t, &json.SyntaxError{Offset: 1}, gotErr)
+	} else if syntaxErr.Offset != 1 {
+		fatal(t, 1, syntaxErr)
+
+	}
+
+	if gotData != nil {
+		fatal(t, nil, gotData)
+	}
+}
+
 func Test_GetTweets_should_be_parsed(t *testing.T) {
 	tt := []struct {
 		testCase string
 		mockData string
 		wantData *twitter.GetTweetsResponse
-		wantErr  error
 	}{
 		{
 			"success",
@@ -122,7 +139,6 @@ func Test_GetTweets_should_be_parsed(t *testing.T) {
 					{Id: "1234", Text: "this is text"},
 				},
 			},
-			nil,
 		},
 		{
 			"with meta data",
@@ -132,7 +148,6 @@ func Test_GetTweets_should_be_parsed(t *testing.T) {
 					{Id: "12345", Text: "this is text"},
 				},
 			},
-			nil,
 		},
 		{
 			"more than one tweet",
@@ -143,7 +158,6 @@ func Test_GetTweets_should_be_parsed(t *testing.T) {
 					{Id: "444", Text: "an other tweet"},
 				},
 			},
-			nil,
 		},
 	}
 
@@ -154,8 +168,8 @@ func Test_GetTweets_should_be_parsed(t *testing.T) {
 			mockData.responseData = tc.mockData
 			gotData, gotErr := service.GetTweets(context.Background())
 
-			if !errors.Is(gotErr, tc.wantErr) {
-				fatal(t, tc.wantErr, gotErr)
+			if gotErr != nil {
+				fatal(t, nil, gotErr.(*json.SyntaxError).Offset)
 			}
 
 			if !reflect.DeepEqual(gotData, tc.wantData) {
