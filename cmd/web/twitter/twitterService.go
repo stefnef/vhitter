@@ -3,15 +3,11 @@ package twitter
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"time"
-)
 
-var (
-	ErrorNotFound     = errors.New("not found")
-	ErrorUnauthorized = errors.New("unauthorized")
+	errorDto "vorhundert.de/vhitter/cmd/web/errorDtos"
 )
 
 type (
@@ -72,11 +68,11 @@ func (v *v1) GetTweets(ctx context.Context) (*GetTweetsResponse, error) {
 
 func checkResponseForError(resp *http.Response) error {
 	if resp.StatusCode == http.StatusUnauthorized {
-		return fmt.Errorf("%w. %s", ErrorUnauthorized, http.StatusText(resp.StatusCode))
+		return fmt.Errorf("%w. %s", errorDto.ErrorUnauthorized, http.StatusText(resp.StatusCode))
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("%w. %s", ErrorNotFound, http.StatusText(resp.StatusCode))
+		return fmt.Errorf("%w. %s", errorDto.ErrorNotFound, http.StatusText(resp.StatusCode))
 	}
 	return nil
 }

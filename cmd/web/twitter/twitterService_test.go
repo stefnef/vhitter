@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	errorDto "vorhundert.de/vhitter/cmd/web/errorDtos"
 	"vorhundert.de/vhitter/cmd/web/twitter"
 )
 
@@ -90,7 +91,7 @@ func Test_GetTweets_should_throw_error_if_status_code_is_not_ok(t *testing.T) {
 		fatal(t, nil, foundData)
 	}
 	if foundError == nil { // TODO Needed Error classes
-		fatal(t, twitter.ErrorNotFound, foundError)
+		fatal(t, errorDto.ErrorNotFound, foundError)
 	}
 }
 
@@ -99,7 +100,7 @@ func Test_GetTweets_should_handle_Unauthorized_error(t *testing.T) {
 	mockData.Bearer = "Something Unusual"
 	gotData, gotErr := service.GetTweets(context.Background())
 
-	if !errors.Is(gotErr, twitter.ErrorUnauthorized) {
+	if !errors.Is(gotErr, errorDto.ErrorUnauthorized) {
 		fatal(t, nil, gotErr)
 	}
 
