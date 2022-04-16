@@ -20,7 +20,7 @@ func Test_should_throw_error_if_file_does_not_exist(t *testing.T) {
 }
 
 func Test_Should_read_config_file(t *testing.T) {
-	expConfig := &Config{Twitter: &TwitterConfig{UserId: "1234", Bearer: "INITIAL_ACCESS_TOKEN"}}
+	expConfig := &Config{Twitter: &TwitterConfig{UserId: "1234", Bearer: "<ACCESS_TOKEN>"}}
 
 	gotConfig, err := NewConfigFile("./testConfig.yml")
 	if err != nil {
@@ -34,7 +34,7 @@ func Test_Should_read_config_file(t *testing.T) {
 }
 
 func Test_should_return_twitter_configuration(t *testing.T) {
-	expConfig := &Config{Twitter: &TwitterConfig{UserId: "1234", Bearer: "INITIAL_ACCESS_TOKEN"}}
+	expConfig := &Config{Twitter: &TwitterConfig{UserId: "1234", Bearer: "<ACCESS_TOKEN>"}}
 	loadDefaultConfig()
 
 	gotTwitter := GetTwitterConfig()
