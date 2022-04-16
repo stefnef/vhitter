@@ -17,4 +17,4 @@ vhitter.code-workspace
 *.svg
 /node_modules/
 package-lock.json
-planer.conf
+configuration.yml
