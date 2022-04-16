@@ -6,7 +6,10 @@ import (
 )
 
 func main() {
+	index()
+}
 
+func index() {
 	fs := http.FileServer(http.Dir("./ui/static"))
 	http.Handle("/", fs)
 
