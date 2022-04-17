@@ -127,6 +127,20 @@ func Test_GetTweets_should_report_parsing_error(t *testing.T) {
 	}
 }
 
+func Test_GetTweets_should_propagade_error_if_server_is_not_reachable(t *testing.T) {
+	newClient := New(*mockConfig, "http://some/url/which/doesn/not/fit", http.DefaultClient, time.Second)
+
+	initMockData()
+	gotData, gotErr := newClient.GetTweets(context.Background())
+	wantErr := &errorDto.ErrorConnection{Msg: "No connection possible"}
+	if gotData != nil {
+		fatal(t, nil, gotData)
+	}
+	if !errors.Is(gotErr, wantErr) {
+		fatal(t, wantErr, gotErr)
+	}
+}
+
 func Test_GetTweets_should_be_parsed(t *testing.T) {
 	tt := []struct {
 		testCase string

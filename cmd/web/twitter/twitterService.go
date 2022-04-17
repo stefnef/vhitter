@@ -38,16 +38,13 @@ func (serviceImpl *ServiceImpl) GetTweets(ctx context.Context) (*GetTweetsRespon
 	ctx, cancel := context.WithTimeout(ctx, serviceImpl.timeout)
 	defer cancel()
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 
 	req.Header.Set("Authorization", "Bearer "+serviceImpl.config.Bearer)
 
 	resp, err := serviceImpl.client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, &errorDto.ErrorConnection{Msg: "No connection possible", Cause: err}
 	}
 	defer resp.Body.Close()
 
