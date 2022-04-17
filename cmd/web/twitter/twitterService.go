@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"vorhundert.de/vhitter/cmd/web/config"
 	errorDto "vorhundert.de/vhitter/cmd/web/errorDtos"
 )
 
@@ -15,25 +16,26 @@ type (
 		GetTweets(ctx context.Context) (*GetTweetsResponse, error)
 	}
 
-	v1 struct { //TODO give v1 a better name
+	ServiceImpl struct {
+		config  config.TwitterConfig
 		baseURL string
 		client  *http.Client
 		timeout time.Duration
 	}
 )
 
-func New(baseURL string, client *http.Client, timeout time.Duration) *v1 {
-	return &v1{
+func New(config config.TwitterConfig, baseURL string, client *http.Client, timeout time.Duration) *ServiceImpl {
+	return &ServiceImpl{
+		config:  config,
 		baseURL: baseURL,
 		client:  client,
 		timeout: timeout,
 	}
 }
 
-func (v *v1) GetTweets(ctx context.Context) (*GetTweetsResponse, error) {
-	url := fmt.Sprintf("%s/2/users/1234/tweets", v.baseURL)
-	fmt.Printf("url: %s\n", url)
-	ctx, cancel := context.WithTimeout(ctx, v.timeout)
+func (serviceImpl *ServiceImpl) GetTweets(ctx context.Context) (*GetTweetsResponse, error) {
+	url := fmt.Sprintf("%s/2/users/%s/tweets", serviceImpl.baseURL, serviceImpl.config.UserId)
+	ctx, cancel := context.WithTimeout(ctx, serviceImpl.timeout)
 	defer cancel()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -41,9 +43,9 @@ func (v *v1) GetTweets(ctx context.Context) (*GetTweetsResponse, error) {
 		return nil, err
 	}
 
-	req.Header.Set("Authorization", "Bearer <ACCESS_TOKEN>") //TODO Read token value
+	req.Header.Set("Authorization", "Bearer "+serviceImpl.config.Bearer)
 
-	resp, err := v.client.Do(req)
+	resp, err := serviceImpl.client.Do(req)
 	if err != nil {
 		return nil, err
 	}

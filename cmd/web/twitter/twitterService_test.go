@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"vorhundert.de/vhitter/cmd/web/config"
 	errorDto "vorhundert.de/vhitter/cmd/web/errorDtos"
 )
 
@@ -24,6 +25,7 @@ type twitterMockData struct {
 var (
 	twitterMockServer *httptest.Server
 	mockData          *twitterMockData
+	mockConfig        *config.TwitterConfig = &config.TwitterConfig{UserId: "1234", Bearer: "<ACCESS_TOKEN>"}
 	service           Service
 )
 
@@ -35,7 +37,7 @@ func fatal(t *testing.T, want, got interface{}) {
 func initMockData() {
 	mockData = &twitterMockData{
 		called:       false,
-		Bearer:       "Bearer <ACCESS_TOKEN>",
+		Bearer:       "Bearer " + mockConfig.Bearer,
 		statusCode:   http.StatusOK,
 		responseData: `{"data":[{"id":"","text":""}]}`,
 	}
@@ -44,14 +46,14 @@ func initMockData() {
 func TestMain(m *testing.M) {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/2/users/1234/tweets", handleGetTweets) //TODO UserId aus Config nehmen
+	mux.HandleFunc("/2/users/"+mockConfig.UserId+"/tweets", handleGetTweets)
 
 	fmt.Printf("mocking server")
 	twitterMockServer = httptest.NewServer(mux)
 	defer twitterMockServer.Close()
 
 	fmt.Println("mocking external")
-	service = New(twitterMockServer.URL, http.DefaultClient, time.Second)
+	service = New(*mockConfig, twitterMockServer.URL, http.DefaultClient, time.Second)
 
 	fmt.Println("run tests")
 	m.Run()
